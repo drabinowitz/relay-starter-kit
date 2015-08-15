@@ -131,15 +131,24 @@ var CheckHidingSpotForTreasureMutation = mutationWithClientMutationId({
   outputFields: {
     hidingSpot: {
       type: hidingSpotType,
-      resolve: ({hidingSpotId}) => getHidingSpot(hidingSpotId),
+      resolve: ({hidingSpotId}) => {
+        console.log(hidingSpotId);
+        console.log(getHidingSpot(hidingSpotId));
+        return getHidingSpot(hidingSpotId);
+      },
     },
     game: {
       type: gameType,
-      resolve: () => getGame()
+      resolve: () => {
+        console.log('getting game');
+        return getGame();
+      },
     },
   },
-  mutateAndGetPayload: ({id}) => {
+  mutateAndGetPayload: ({id, text}) => {
     var {id: hidingSpotId} = fromGlobalId(id);
+    console.log(hidingSpotId);
+    console.log(text);
     checkHidingSpotForTreasure(hidingSpotId);
     return {hidingSpotId};
   }
