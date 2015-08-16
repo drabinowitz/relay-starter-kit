@@ -34,7 +34,7 @@ export default class CheckHidingSpotForTreasureMutation extends Relay.Mutation {
   getConfigs() {
     return [{
       type: 'FIELDS_CHANGE',
-      fieldIds: {
+      fieldIDs: {
         hidingSpot: this.props.hidingSpot.id,
         game: this.props.game.id,
       },

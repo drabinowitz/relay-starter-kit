@@ -124,34 +124,23 @@ var queryType = new GraphQLObjectType({
 var CheckHidingSpotForTreasureMutation = mutationWithClientMutationId({
   name: 'CheckHidingSpotForTreasure',
   inputFields: {
-    id: {
-      type: new GraphQLNonNull(GraphQLID),
-    },
+    id: { type: new GraphQLNonNull(GraphQLID) },
   },
   outputFields: {
     hidingSpot: {
       type: hidingSpotType,
-      resolve: ({hidingSpotId}) => {
-        console.log(hidingSpotId);
-        console.log(getHidingSpot(hidingSpotId));
-        return getHidingSpot(hidingSpotId);
-      },
+      resolve: ({localHidingSpotId}) => getHidingSpot(localHidingSpotId),
     },
     game: {
       type: gameType,
-      resolve: () => {
-        console.log('getting game');
-        return getGame();
-      },
+      resolve: () => getGame(),
     },
   },
-  mutateAndGetPayload: ({id, text}) => {
-    var {id: hidingSpotId} = fromGlobalId(id);
-    console.log(hidingSpotId);
-    console.log(text);
-    checkHidingSpotForTreasure(hidingSpotId);
-    return {hidingSpotId};
-  }
+  mutateAndGetPayload: ({id}) => {
+    var localHidingSpotId = fromGlobalId(id).id;
+    checkHidingSpotForTreasure(localHidingSpotId);
+    return {localHidingSpotId};
+  },
 });
 
 var mutationType = new GraphQLObjectType({
