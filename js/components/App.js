@@ -1,6 +1,8 @@
 import 'babel/polyfill';
 import CheckHidingSpotForTreasureMutation from
 '../mutations/CheckHidingSpotForTreasureMutation';
+import ResetGameMutation from
+'../mutations/ResetGameMutation';
 
 class App extends React.Component {
   _getHidingSpotStyle(hidingSpot) {
@@ -52,6 +54,21 @@ class App extends React.Component {
       />
     ));
   }
+  _handleResetGameClick() {
+    Relay.Store.update(
+      new ResetGameMutation({
+        game: this.props.game,
+      })
+    );
+  }
+  renderResetButton() {
+    return (
+      <button
+        onClick={this._handleResetGameClick.bind(this)}>
+        reset?
+      </button>
+    );
+  }
   render() {
     var headerText;
     if (this.props.relay.getPendingTransactions(this.props.game)) {
@@ -67,6 +84,7 @@ class App extends React.Component {
       <div>
         <h1>{headerText}</h1>
         {this.renderGameBoard()}
+        {this.renderResetButton()}
         <p>Turns remaining: {this.props.game.turnsRemaining}</p>
       </div>
     );
@@ -89,6 +107,7 @@ export default Relay.createContainer(App, {
           }
         },
         ${CheckHidingSpotForTreasureMutation.getFragment('game')},
+        ${ResetGameMutation.getFragment('game')},
       }
     `,
   },

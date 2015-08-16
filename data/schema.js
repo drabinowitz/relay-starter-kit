@@ -38,6 +38,7 @@ import {
   getHidingSpot,
   getHidingSpots,
   getTurnsRemaining,
+  resetGame,
 } from './database';
 
 var {nodeInterface, nodeField} = nodeDefinitions(
@@ -143,10 +144,25 @@ var CheckHidingSpotForTreasureMutation = mutationWithClientMutationId({
   },
 });
 
+var ResetGameMutation = mutationWithClientMutationId({
+  name: 'ResetGame',
+  outputFields: {
+    game: {
+      type: gameType,
+      resolve: () => getGame(),
+    },
+  },
+  mutateAndGetPayload: () => {
+    resetGame();
+    return {};
+  }
+});
+
 var mutationType = new GraphQLObjectType({
   name: 'Mutation',
   fields: () => ({
     checkHidingSpotForTreasure: CheckHidingSpotForTreasureMutation,
+    resetGame: ResetGameMutation,
   }),
 });
 
