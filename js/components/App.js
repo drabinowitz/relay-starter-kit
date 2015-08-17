@@ -3,30 +3,9 @@ import CheckHidingSpotForTreasureMutation from
 '../mutations/CheckHidingSpotForTreasureMutation';
 import ResetGameMutation from
 '../mutations/ResetGameMutation';
+import HidingSpot from './HidingSpot'
 
 class App extends React.Component {
-  _getHidingSpotStyle(hidingSpot) {
-    var color;
-    if (this.props.relay.hasOptimisticUpdate(hidingSpot)) {
-      color = 'lightGrey';
-    } else if (hidingSpot.hasBeenChecked) {
-      if (hidingSpot.hasTreasure) {
-        color = 'green';
-      } else {
-        color = 'red';
-      }
-    } else {
-      color = 'black';
-    }
-    return {
-      backgroundColor: color,
-      cursor: this._isGameOver() ? null : 'pointer',
-      display: 'inline-block',
-      height: 100,
-      marginRight: 10,
-      width: 100,
-    };
-  }
   _handleHidingSpotClick(hidingSpot) {
     if (this._isGameOver()) {
       return;
@@ -48,9 +27,9 @@ class App extends React.Component {
   }
   renderGameBoard() {
     return this.props.game.hidingSpots.edges.map(edge => (
-      <div
+      <HidingSpot
         onClick={this._handleHidingSpotClick.bind(this, edge.node)}
-        style={this._getHidingSpotStyle(edge.node)}
+        hidingSpot={edge.node}
       />
     ));
   }
@@ -99,10 +78,10 @@ export default Relay.createContainer(App, {
         hidingSpots(first: 9) {
           edges {
             node {
-              hasBeenChecked,
               hasTreasure,
               id,
               ${CheckHidingSpotForTreasureMutation.getFragment('hidingSpot')},
+              ${HidingSpot.getFragment('hidingSpot')},
             }
           }
         },
