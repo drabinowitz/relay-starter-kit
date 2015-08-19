@@ -48,8 +48,11 @@ export function checkHidingSpotForTreasure(id) {
   if (game.state !== PLAYING) {
     return;
   }
-  turnsRemaining--;
   var hidingSpot = getHidingSpot(id);
+  if (hidingSpot.hasBeenChecked) {
+    throw new Error('Hiding Spot Has Already Been Checked!')
+  }
+  turnsRemaining--;
   if (hidingSpot.hasTreasure) {
     game.state = WIN
   } else if (turnsRemaining === 0) {
