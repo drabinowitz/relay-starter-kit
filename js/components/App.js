@@ -7,7 +7,7 @@ import HidingSpot from './HidingSpot'
 
 class App extends React.Component {
   _handleHidingSpotClick(hidingSpot) {
-    if (this._isGameOver()) {
+    if (this.props.game.state !== 'PLAYING') {
       return;
     }
     Relay.Store.update(
@@ -16,14 +16,6 @@ class App extends React.Component {
         hidingSpot,
       })
     );
-  }
-  _hasFoundTreasure() {
-    return (
-      this.props.game.hidingSpots.edges.some(edge => edge.node.hasTreasure)
-    );
-  }
-  _isGameOver() {
-    return !this.props.game.turnsRemaining || this._hasFoundTreasure();
   }
   renderGameBoard() {
     return this.props.game.hidingSpots.edges.map(edge => (
@@ -52,9 +44,9 @@ class App extends React.Component {
     var headerText;
     if (this.props.relay.getPendingTransactions(this.props.game)) {
       headerText = '\u2026';
-    } else if (this._hasFoundTreasure()) {
+    } else if (this.props.game.state === 'WIN') {
       headerText = 'You win!';
-    } else if (this._isGameOver()) {
+    } else if (this.props.game.state === 'LOSE') {
       headerText = 'Game over!';
     } else {
       headerText = 'Find the treasure!';
@@ -75,6 +67,7 @@ export default Relay.createContainer(App, {
     game: () => Relay.QL`
       fragment on Game {
         turnsRemaining,
+        state,
         hidingSpots(first: 9) {
           edges {
             node {

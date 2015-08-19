@@ -79,6 +79,11 @@ var gameType = new GraphQLObjectType({
       description: 'The number of turns a player has left to find the treasure',
       resolve: () => getTurnsRemaining(),
     },
+    state: {
+      type: GraphQLString,
+      description: 'The game state PLAYING, WIN, LOSE',
+      resolve: () => getGame().state,
+    },
   }),
   interfaces: [nodeInterface],
 });

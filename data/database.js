@@ -11,9 +11,14 @@
 class Game extends Object {}
 class HidingSpot extends Object {}
 
+const PLAYING = 'PLAYING'
+const WIN = 'WIN'
+const LOSE = 'LOSE'
+
 // Mock data
 var game = new Game();
 game.id = '1';
+game.state = PLAYING;
 
 var hidingSpots;
 var setHidingSpots = function() {
@@ -34,16 +39,22 @@ var turnsRemaining;
 export function resetGame(){
   setHidingSpots();
   turnsRemaining = 3;
+  game.state = PLAYING;
 };
 
 resetGame();
 
 export function checkHidingSpotForTreasure(id) {
-  if (hidingSpots.some(hs => hs.hasTreasure && hs.hasBeenChecked)) {
+  if (game.state !== PLAYING) {
     return;
   }
   turnsRemaining--;
   var hidingSpot = getHidingSpot(id);
+  if (hidingSpot.hasTreasure) {
+    game.state = WIN
+  } else if (turnsRemaining === 0) {
+    game.state = LOSE
+  }
   hidingSpot.hasBeenChecked = true;
 }
 

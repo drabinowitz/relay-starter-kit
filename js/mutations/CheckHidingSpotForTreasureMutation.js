@@ -27,6 +27,7 @@ export default class CheckHidingSpotForTreasureMutation extends Relay.Mutation {
         },
         game {
           turnsRemaining,
+          state,
         },
       }
     `;
@@ -49,6 +50,7 @@ export default class CheckHidingSpotForTreasureMutation extends Relay.Mutation {
     return {
       game: {
         turnsRemaining: this.props.game.turnsRemaining - 1,
+        state: 'PLAYING',
       },
       hidingSpot: {
         id: this.props.hidingSpot.id,
