@@ -1,4 +1,15 @@
+import CheckHidingSpotForTreasureMutation from
+'../mutations/CheckHidingSpotForTreasureMutation';
+
 class HidingSpot extends React.Component {
+  _handleHidingSpotClick(hidingSpot) {
+    Relay.Store.update(
+      new CheckHidingSpotForTreasureMutation({
+        game: this.props.game,
+        hidingSpot,
+      })
+    );
+  }
   _getHidingSpotStyle(hidingSpot) {
     var color;
     if (this.props.relay.hasOptimisticUpdate(hidingSpot)) {
@@ -25,7 +36,7 @@ class HidingSpot extends React.Component {
   render() {
     return (
       <div
-        onClick={this.props.onClick}
+        onClick={() => this._handleHidingSpotClick(this.props.hidingSpot)}
         style={this._getHidingSpotStyle(this.props.hidingSpot)}
         />
     );
@@ -38,7 +49,13 @@ export default Relay.createContainer(HidingSpot, {
       fragment on HidingSpot {
         hasBeenChecked,
         hasTreasure,
+        ${CheckHidingSpotForTreasureMutation.getFragment('hidingSpot')},
       }
     `,
+    game: () => Relay.QL`
+      fragment on Game {
+        ${CheckHidingSpotForTreasureMutation.getFragment('game')},
+      }
+    `
   }
 });

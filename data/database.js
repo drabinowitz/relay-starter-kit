@@ -46,7 +46,7 @@ resetGame();
 
 export function checkHidingSpotForTreasure(id) {
   if (game.state !== PLAYING) {
-    return;
+    throw new Error('Game is Over!')
   }
   var hidingSpot = getHidingSpot(id);
   if (hidingSpot.hasBeenChecked) {

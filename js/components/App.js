@@ -1,26 +1,13 @@
 import 'babel/polyfill';
-import CheckHidingSpotForTreasureMutation from
-'../mutations/CheckHidingSpotForTreasureMutation';
 import ResetGameMutation from
 '../mutations/ResetGameMutation';
 import HidingSpot from './HidingSpot'
 
 class App extends React.Component {
-  _handleHidingSpotClick(hidingSpot) {
-    if (this.props.game.state !== 'PLAYING') {
-      return;
-    }
-    Relay.Store.update(
-      new CheckHidingSpotForTreasureMutation({
-        game: this.props.game,
-        hidingSpot,
-      })
-    );
-  }
   renderGameBoard() {
     return this.props.game.hidingSpots.edges.map(edge => (
       <HidingSpot
-        onClick={this._handleHidingSpotClick.bind(this, edge.node)}
+        game={this.props.game}
         hidingSpot={edge.node}
       />
     ));
@@ -71,14 +58,11 @@ export default Relay.createContainer(App, {
         hidingSpots(first: 9) {
           edges {
             node {
-              hasTreasure,
-              id,
-              ${CheckHidingSpotForTreasureMutation.getFragment('hidingSpot')},
               ${HidingSpot.getFragment('hidingSpot')},
             }
           }
         },
-        ${CheckHidingSpotForTreasureMutation.getFragment('game')},
+        ${HidingSpot.getFragment('game')},
         ${ResetGameMutation.getFragment('game')},
       }
     `,
