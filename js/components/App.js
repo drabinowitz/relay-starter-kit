@@ -12,6 +12,7 @@ class App extends React.Component {
       />
     ));
   }
+
   _handleResetGameClick() {
     Relay.Store.update(
       new ResetGameMutation({
@@ -19,6 +20,7 @@ class App extends React.Component {
       })
     );
   }
+
   renderResetButton() {
     return (
       <button
@@ -27,6 +29,7 @@ class App extends React.Component {
       </button>
     );
   }
+
   render() {
     var headerText;
     if (this.props.relay.getPendingTransactions(this.props.game)) {

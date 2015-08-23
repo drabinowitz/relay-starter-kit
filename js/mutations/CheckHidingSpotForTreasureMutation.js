@@ -50,7 +50,7 @@ export default class CheckHidingSpotForTreasureMutation extends Relay.Mutation {
     return {
       game: {
         turnsRemaining: this.props.game.turnsRemaining - 1,
-        state: 'PLAYING',
+        state: 'PENDING',
       },
       hidingSpot: {
         id: this.props.hidingSpot.id,

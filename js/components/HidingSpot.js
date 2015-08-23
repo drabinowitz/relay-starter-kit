@@ -10,6 +10,7 @@ class HidingSpot extends React.Component {
       })
     );
   }
+
   _getHidingSpotStyle(hidingSpot) {
     var color;
     if (this.props.relay.hasOptimisticUpdate(hidingSpot)) {
