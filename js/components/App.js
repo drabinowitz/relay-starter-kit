@@ -30,6 +30,28 @@ class App extends React.Component {
     );
   }
 
+  _handleHidingSpotPageClick() {
+    if (this.props.game.hidingSpots.pageInfo.hasNextPage) {
+      var last = this.props.game.hidingSpots.edges.length - 1;
+      var lastCursor = this.props.game.hidingSpots.edges[last].cursor;
+      console.log(lastCursor);
+      this.props.relay.setVariables({
+        hidingSpotCursor: lastCursor,
+      });
+    }
+  }
+
+  renderCursorButtons() {
+    return (
+      <div>
+        <button
+          onClick={this._handleHidingSpotPageClick.bind(this)}>
+          Page
+        </button>
+      </div>
+    );
+  }
+
   render() {
     var headerText;
     if (this.props.relay.getPendingTransactions(this.props.game)) {
@@ -46,6 +68,7 @@ class App extends React.Component {
         <h1>{headerText}</h1>
         {this.renderGameBoard()}
         {this.renderResetButton()}
+        {this.renderCursorButtons()}
         <p>Turns remaining: {this.props.game.turnsRemaining}</p>
       </div>
     );
@@ -53,17 +76,24 @@ class App extends React.Component {
 }
 
 export default Relay.createContainer(App, {
+  initialVariables: {
+    hidingSpotCursor: null
+  },
   fragments: {
     game: () => Relay.QL`
       fragment on Game {
         turnsRemaining,
         state,
-        hidingSpots(first: 9) {
+        hidingSpots(first: 3 after: $hidingSpotCursor) {
           edges {
             node {
               ${HidingSpot.getFragment('hidingSpot')},
-            }
-          }
+            },
+            cursor,
+          },
+          pageInfo {
+            hasNextPage,
+          },
         },
         ${HidingSpot.getFragment('game')},
         ${ResetGameMutation.getFragment('game')},
