@@ -32,11 +32,12 @@ class App extends React.Component {
 
   _handleHidingSpotPageClick() {
     if (this.props.game.hidingSpots.pageInfo.hasNextPage) {
-      var last = this.props.game.hidingSpots.edges.length - 1;
-      var lastCursor = this.props.game.hidingSpots.edges[last].cursor;
-      console.log(lastCursor);
       this.props.relay.setVariables({
-        hidingSpotCursor: lastCursor,
+        hidingSpotCursor: this.props.game.hidingSpots.pageInfo.endCursor,
+      });
+    } else {
+      this.props.relay.setVariables({
+        hidingSpotCursor: null,
       });
     }
   }
@@ -93,6 +94,7 @@ export default Relay.createContainer(App, {
           },
           pageInfo {
             hasNextPage,
+            endCursor,
           },
         },
         ${HidingSpot.getFragment('game')},

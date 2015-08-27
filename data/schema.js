@@ -53,12 +53,16 @@ var {nodeInterface, nodeField} = nodeDefinitions(
     }
   },
   (obj) => {
-    if (obj instanceof Game) {
-      return gameType;
-    } else if (obj instanceof HidingSpot) {
-      return hidingSpotType;
+    if (typeof obj === 'function') {
+      if (obj instanceof Game) {
+        return gameType;
+      } else if (obj instanceof HidingSpot) {
+        return hidingSpotType;
+      } else {
+        return null;
+      }
     } else {
-      return null;
+      return gameType;
     }
   }
 );
