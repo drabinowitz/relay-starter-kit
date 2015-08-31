@@ -1,18 +1,10 @@
 import 'babel/polyfill';
 import ResetGameMutation from
 '../mutations/ResetGameMutation';
-import HidingSpot from './HidingSpot'
+import HidingSpots from
+'./HidingSpots'
 
 class App extends React.Component {
-  renderGameBoard() {
-    return this.props.game.hidingSpots.edges.map(edge => (
-      <HidingSpot
-        game={this.props.game}
-        hidingSpot={edge.node}
-      />
-    ));
-  }
-
   _handleResetGameClick() {
     Relay.Store.update(
       new ResetGameMutation({
@@ -30,29 +22,6 @@ class App extends React.Component {
     );
   }
 
-  _handleHidingSpotPageClick() {
-    if (this.props.game.hidingSpots.pageInfo.hasNextPage) {
-      this.props.relay.setVariables({
-        hidingSpotCursor: this.props.game.hidingSpots.pageInfo.endCursor,
-      });
-    } else {
-      this.props.relay.setVariables({
-        hidingSpotCursor: null,
-      });
-    }
-  }
-
-  renderCursorButtons() {
-    return (
-      <div>
-        <button
-          onClick={this._handleHidingSpotPageClick.bind(this)}>
-          Page
-        </button>
-      </div>
-    );
-  }
-
   render() {
     var headerText;
     if (this.props.relay.getPendingTransactions(this.props.game)) {
@@ -67,9 +36,8 @@ class App extends React.Component {
     return (
       <div>
         <h1>{headerText}</h1>
-        {this.renderGameBoard()}
         {this.renderResetButton()}
-        {this.renderCursorButtons()}
+        <HidingSpots game={this.props.game} />
         <p>Turns remaining: {this.props.game.turnsRemaining}</p>
       </div>
     );
@@ -77,27 +45,12 @@ class App extends React.Component {
 }
 
 export default Relay.createContainer(App, {
-  initialVariables: {
-    hidingSpotCursor: null
-  },
   fragments: {
     game: () => Relay.QL`
       fragment on Game {
         turnsRemaining,
         state,
-        hidingSpots(first: 3 after: $hidingSpotCursor) {
-          edges {
-            node {
-              ${HidingSpot.getFragment('hidingSpot')},
-            },
-            cursor,
-          },
-          pageInfo {
-            hasNextPage,
-            endCursor,
-          },
-        },
-        ${HidingSpot.getFragment('game')},
+        ${HidingSpots.getFragment('game')},
         ${ResetGameMutation.getFragment('game')},
       }
     `,
