@@ -22,6 +22,10 @@ class App extends React.Component {
     );
   }
 
+  _handlePageChange(variables) {
+    this.props.relay.setVariables(variables);
+  }
+
   render() {
     var headerText;
     if (this.props.relay.getPendingTransactions(this.props.game)) {
@@ -37,7 +41,11 @@ class App extends React.Component {
       <div>
         <h1>{headerText}</h1>
         {this.renderResetButton()}
-        <HidingSpots game={this.props.game} />
+        <HidingSpots
+          game={this.props.game}
+          hidingSpots={this.props.game.hidingSpots}
+          onPage={this._handlePageChange.bind(this)}
+          />
         <p>Turns remaining: {this.props.game.turnsRemaining}</p>
       </div>
     );
@@ -45,13 +53,27 @@ class App extends React.Component {
 }
 
 export default Relay.createContainer(App, {
+  initialVariables: {
+    first: 3,
+    afterHidingSpotCursor: null,
+    last: null,
+    beforeHidingSpotCursor: null,
+  },
   fragments: {
     game: () => Relay.QL`
       fragment on Game {
         turnsRemaining,
         state,
-        ${HidingSpots.getFragment('game')},
+        hidingSpots(
+          first: $first
+          after: $afterHidingSpotCursor
+          last:  $last
+          before: $beforeHidingSpotCursor
+        ) {
+          ${HidingSpots.getFragment('hidingSpots')},
+        },
         ${ResetGameMutation.getFragment('game')},
+        ${HidingSpots.getFragment('game')},
       }
     `,
   },

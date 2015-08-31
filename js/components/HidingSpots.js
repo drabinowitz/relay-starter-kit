@@ -1,8 +1,12 @@
 import HidingSpot from './HidingSpot'
 
 class HidingSpots extends React.Component {
+  static propTypes = {
+    onPage: React.PropTypes.func
+  }
+
   renderGameBoard() {
-    return this.props.game.hidingSpots.edges.map(edge => (
+    return this.props.hidingSpots.edges.map(edge => (
       <HidingSpot
         game={this.props.game}
         hidingSpot={edge.node}
@@ -11,20 +15,20 @@ class HidingSpots extends React.Component {
   }
 
   _handleHidingSpotNextPageClick() {
-    this.props.relay.setVariables({
+    this.props.onPage({
       first: 3,
-      afterHidingSpotCursor: this.props.game.hidingSpots.pageInfo.endCursor,
+      afterHidingSpotCursor: this.props.hidingSpots.pageInfo.endCursor,
       last: null,
       beforeHidingSpotCursor: null,
     });
   }
 
   _handleHidingSpotPreviousPageClick() {
-    this.props.relay.setVariables({
+    this.props.onPage({
       first: null,
       afterHidingSpotCursor: null,
       last: 3,
-      beforeHidingSpotCursor: this.props.game.hidingSpots.pageInfo.startCursor,
+      beforeHidingSpotCursor: this.props.hidingSpots.pageInfo.startCursor,
     });
   }
 
@@ -32,12 +36,12 @@ class HidingSpots extends React.Component {
     return (
       <div>
         <button
-          disabled={!this.props.game.hidingSpots.pageInfo.hasPreviousPage}
+          disabled={!this.props.hidingSpots.pageInfo.hasPreviousPage}
           onClick={this._handleHidingSpotPreviousPageClick.bind(this)}>
           backward
         </button>
         <button
-          disabled={!this.props.game.hidingSpots.pageInfo.hasNextPage}
+          disabled={!this.props.hidingSpots.pageInfo.hasNextPage}
           onClick={this._handleHidingSpotNextPageClick.bind(this)}>
           forward
         </button>
@@ -56,34 +60,24 @@ class HidingSpots extends React.Component {
 }
 
 export default Relay.createContainer(HidingSpots, {
-  initialVariables: {
-    first: 3,
-    afterHidingSpotCursor: null,
-    last: null,
-    beforeHidingSpotCursor: null,
-  },
   fragments: {
-    game: () => Relay.QL`
-      fragment on Game {
-        hidingSpots(
-          first: $first
-          after: $afterHidingSpotCursor
-          last:  $last
-          before: $beforeHidingSpotCursor
-        ) {
-          edges {
-            node {
-              ${HidingSpot.getFragment('hidingSpot')},
-            },
-            cursor,
-          },
-          pageInfo {
-            hasNextPage,
-            hasPreviousPage,
-            endCursor,
-            startCursor,
+    hidingSpots: () => Relay.QL`
+      fragment on HidingSpotConnection {
+        edges {
+          node {
+            ${HidingSpot.getFragment('hidingSpot')},
           },
         },
+        pageInfo {
+          hasNextPage,
+          hasPreviousPage,
+          endCursor,
+          startCursor,
+        },
+      }
+    `,
+    game: () => Relay.QL`
+      fragment on Game {
         ${HidingSpot.getFragment('game')},
       }
     `,
