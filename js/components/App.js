@@ -55,21 +55,13 @@ class App extends React.Component {
 export default Relay.createContainer(App, {
   initialVariables: {
     first: 3,
-    afterHidingSpotCursor: null,
-    last: null,
-    beforeHidingSpotCursor: null,
   },
   fragments: {
     game: () => Relay.QL`
       fragment on Game {
         turnsRemaining,
         state,
-        hidingSpots(
-          first: $first
-          after: $afterHidingSpotCursor
-          last:  $last
-          before: $beforeHidingSpotCursor
-        ) {
+        hidingSpots(first: $first) {
           ${HidingSpots.getFragment('hidingSpots')},
         },
         ${ResetGameMutation.getFragment('game')},

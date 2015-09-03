@@ -16,30 +16,13 @@ class HidingSpots extends React.Component {
 
   _handleHidingSpotNextPageClick() {
     this.props.onPage({
-      first: 3,
-      afterHidingSpotCursor: this.props.hidingSpots.pageInfo.endCursor,
-      last: null,
-      beforeHidingSpotCursor: null,
-    });
-  }
-
-  _handleHidingSpotPreviousPageClick() {
-    this.props.onPage({
-      first: null,
-      afterHidingSpotCursor: null,
-      last: 3,
-      beforeHidingSpotCursor: this.props.hidingSpots.pageInfo.startCursor,
+      first: this.props.hidingSpots.edges.length + 3,
     });
   }
 
   renderCursorButtons() {
     return (
       <div>
-        <button
-          disabled={!this.props.hidingSpots.pageInfo.hasPreviousPage}
-          onClick={this._handleHidingSpotPreviousPageClick.bind(this)}>
-          backward
-        </button>
         <button
           disabled={!this.props.hidingSpots.pageInfo.hasNextPage}
           onClick={this._handleHidingSpotNextPageClick.bind(this)}>
